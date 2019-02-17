@@ -5,10 +5,37 @@ import numpy as np
 from matplotlib import pyplot as plt
 from EndPointDetect import EndPointDetect
 from configure_class import Configure
+import os
 class ShorterWav:
-    def __init__(self,wave_file_name,output_file_name):
+    @staticmethod
+    def get_wav_file_names(BASE_DIR='.'):
+        """
+
+        :param BASE_DIR: 默认获取该py文件下的所有的wav文件
+        :return:
+        """
+        L = []
+        for root, dirs, files in os.walk(BASE_DIR):
+            for file in files:
+                if file[-4:] == '.wav':
+                    L.append(file)
+        return L
+
+    @staticmethod
+    def makedir(default_path = './result'):
+
+        if not os.path.exists(default_path):
+            os.makedirs(default_path)
+            return True
+        else:
+            print("{}已经存在".format(default_path))
+            return False
+
+
+    def __init__(self,input_file_name,output_file_name):
         self.output_file_name=output_file_name
-        self.frames = wave.open(wave_file_name,"rb")
+        self.frames = wave.open(input_file_name,"rb")
+
         self.binary_wav_data = self.frames.readframes(self.frames.getnframes())
 
         # 如果if False 那么就没有 digit_wav_data 了
@@ -25,6 +52,8 @@ class ShorterWav:
         self.wave_data_after = []
         self.run()
         self.save_file()
+
+
 
     def save_file(self):
         c=Configure()
@@ -64,9 +93,13 @@ class ShorterWav:
         print(len(self.wave_data_after))
         # self.save_file()
 
+if __name__=="__main__":
+    ShorterWav.makedir()
+    from_dir = './wavs/'
+    to_dir='./result/'
+    for file in ShorterWav.get_wav_file_names(from_dir):
+        p = ShorterWav(from_dir+file,to_dir+file[:-4]+str(Configure.RECORD_SECONDS)+'s'+'.wav')
 
-
-p = ShorterWav('default_nohash_前进_1_.wav','gogogo2.wav')
 
 
 
