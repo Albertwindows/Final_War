@@ -11,7 +11,7 @@ class Recorder:
     """
 
     def __init__(self):
-
+        self.counts = 0
         self.cur_num=0#本次录音的编号，0对应“前进”（labels）
         self.labels=["前进","后退","左转","右转","停止","启动"]
         self.format_dir()
@@ -39,7 +39,7 @@ class Recorder:
         self.et_name=Entry(self.window,width=15)
         self.et_name.insert(0,'default')
         self.et_time=Entry(self.window,width=15)
-        self.et_time.insert(0, '2.5')
+        self.et_time.insert(0, '1.5')
 
         self.begin_button=Button(self.window,text="录音",command=self.record_run)
         self.save_button=Button(self.window,text="保存",command=self.save_wav)
@@ -90,12 +90,14 @@ class Recorder:
         :return:
         """
         # 产生一个随机数来显示说明要说内容的编号
-        self.cur_num = int((random.random()) * len(self.labels))
+        # self.cur_num = int((random.random()) * len(self.labels))
+        self.cur_num = self.counts % len(self.labels)
         self.lb_please.configure(text='请说：'+self.get_cur_label())
         self.lb_times.configure(text='第'+str(self.times[self.cur_num])+'次')
         self.window.update()
 
     def save_wav(self):
+        self.counts += 1
         self.times[self.cur_num] += 1  # 计数
 
 
