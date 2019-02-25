@@ -3,6 +3,7 @@ from tkinter.ttk import *
 import pyaudio
 import wave
 import random
+import os
 from configure_class import Configure
 class Recorder:
     """
@@ -13,6 +14,7 @@ class Recorder:
 
         self.cur_num=0#本次录音的编号，0对应“前进”（labels）
         self.labels=["前进","后退","左转","右转","停止","启动"]
+        self.format_dir()
         self.label_len=len(self.labels)
         # 对应编号的次数
         self.times=[1]*len(self.labels)
@@ -51,6 +53,12 @@ class Recorder:
         self.configure=Configure()
         # 初始化每个组件的位置
         self.place_all()
+
+
+    def format_dir(self):
+        for m_dir in self.labels:
+            if not os.path.exists(m_dir):
+                os.makedirs(m_dir)
 
 
     def read_configure(self):
@@ -95,7 +103,7 @@ class Recorder:
         frames=self.frames
         p=self.p
         c=self.configure
-        wf = wave.open(c.WAVE_OUTPUT_FILENAME, 'wb')
+        wf = wave.open('./'+self.get_cur_label()+'/'+c.WAVE_OUTPUT_FILENAME, 'wb')
         wf.setnchannels(c.CHANNELS)
         wf.setsampwidth(p.get_sample_size(c.FORMAT))
         wf.setframerate(c.RATE)
