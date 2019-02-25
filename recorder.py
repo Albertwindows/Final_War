@@ -14,7 +14,7 @@ class Recorder:
         self.counts = 0
         self.cur_num=0#本次录音的编号，0对应“前进”（labels）
         self.labels=["前进","后退","左转","右转","停止","启动"]
-        # self.format_dir()
+        self.format_dir()
         self.label_len=len(self.labels)
         # 对应编号的次数
         self.times=[1]*len(self.labels)
@@ -55,10 +55,9 @@ class Recorder:
         self.place_all()
 
 
-    # def format_dir(self):
-    #     for m_dir in self.labels:
-    #         if not os.path.exists(m_dir):
-    #             os.makedirs(m_dir)
+    def format_dir(self):
+        if not os.path.exists('./wavs/'):
+            os.makedirs('./wavs/')
 
 
     def read_configure(self):
