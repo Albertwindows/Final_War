@@ -11,7 +11,7 @@ class Recorder:
     """
 
     def __init__(self):
-        self.counts = 0
+        self.counts = 1
         self.cur_num=0#本次录音的编号，0对应“前进”（labels）
         self.labels=["前进","后退","左转","右转","停止","启动"]
         self.format_dir()
@@ -30,7 +30,7 @@ class Recorder:
         self.lb_pro_left = Label(self.window, text="进度条：", font=("Arial Bold", self.font_size))
         self.lb_pro_right = Label(self.window, text="0%", font=("Arial Bold", self.font_size))
         # 需要设置text
-        self.lb_please = Label(self.window, text="请说：", font=("Arial Bold", self.font_size))
+        self.lb_please = Label(self.window,foreground='red',text="请说："+self.labels[0], font=("Arial Bold", self.font_size))
         # 这个设置成第i遍说相同的词，需要在初始化中进行更改
         self.lb_times = Label(self.window, text="第1次", font=("Arial Bold", self.font_size))
         self.lb_time_set = Label(self.window, text="时间长度设置：", font=("Arial Bold", self.font_size))
@@ -45,7 +45,6 @@ class Recorder:
         self.save_button=Button(self.window,text="保存",command=self.save_wav)
         #设置按钮的初始化状态
         self.save_button['state']='disable'
-        self.save_wav=True
 
         # 保存每次录音的中间结果，然后决定是不是要保存。
         self.frames=[]
@@ -54,8 +53,8 @@ class Recorder:
         # 初始化每个组件的位置
         self.place_all()
 
-
-    def format_dir(self):
+    @staticmethod
+    def format_dir():
         if not os.path.exists('./wavs/'):
             os.makedirs('./wavs/')
 
@@ -96,8 +95,9 @@ class Recorder:
         self.window.update()
 
     def save_wav(self):
-        self.counts += 1
         self.times[self.cur_num] += 1  # 计数
+        self.counts += 1
+
 
 
         self.save_button['state']='disable'
@@ -110,6 +110,7 @@ class Recorder:
         wf.setframerate(c.RATE)
         wf.writeframes(b''.join(frames))
         wf.close()
+        self.update_labels()
 
 
     def record_run(self):
@@ -118,7 +119,7 @@ class Recorder:
         :return:
         """
 
-        self.update_labels()
+
         self.begin_button['state']='disable'
         self.read_configure()
 
@@ -131,7 +132,7 @@ class Recorder:
                         input=True,
                         frames_per_buffer=c.CHUNK)
 
-        print("* recording")
+        # print("* recording")
 
         frames = []
 
@@ -144,7 +145,7 @@ class Recorder:
             self.window.update()
             frames.append(data)
 
-        print("* done recording")
+        # print("* done recording")
 
         stream.stop_stream()
         stream.close()
